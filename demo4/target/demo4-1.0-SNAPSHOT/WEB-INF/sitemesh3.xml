@@ -1,5 +1,0 @@
-<sitemesh>
-    <mapping path="/admin/*" decorator="/decorators/admin.jsp"/>
-    <mapping path="/*" decorator="/decorators/main.jsp"/>
-    <mapping path="/login" exclusion="true"/>
-</sitemesh>
