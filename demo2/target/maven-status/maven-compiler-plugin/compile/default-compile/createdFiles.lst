@@ -1,0 +1,17 @@
+com\example\demo2\CreateUsers.class
+com\example\demo2\filter\AuthFilter.class
+com\example\demo2\model\Category.class
+com\example\demo2\controller\RegisterController.class
+com\example\demo2\controller\HomeController.class
+com\example\demo2\service\UserService.class
+com\example\demo2\controller\LogoutController.class
+com\example\demo2\controller\LoginController.class
+com\example\demo2\service\CategoryService.class
+com\example\demo2\config\JpaConfig.class
+META-INF\persistence.xml
+com\example\demo2\dao\UserDAO.class
+com\example\demo2\model\User.class
+com\example\demo2\controller\UpdateController.class
+com\example\demo2\dao\CategoryDAO.class
+com\example\demo2\controller\ChangeRoleController.class
+com\example\demo2\controller\CategoryController.class
