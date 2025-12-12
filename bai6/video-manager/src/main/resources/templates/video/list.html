@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout-main}">
+<head>
+    <title>Danh sách Video</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2 class="mb-4 text-primary"><i class="bi bi-film"></i> Quản Lý Video</h2>
+    
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <a th:href="@{/admin/videos/add}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Thêm Video Mới
+            </a>
+            
+            <form th:action="@{/admin/videos}" class="d-flex gap-2">
+                <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Tìm theo tiêu đề..." style="width: 300px;">
+                <select name="categoryId" class="form-select" style="width: 200px;">
+                    <option value="">-- Tất cả danh mục --</option>
+                    <option th:each="c : ${categories}" 
+                            th:value="${c.categoryId}" 
+                            th:text="${c.categoryname}"
+                            th:selected="${categoryId} == ${c.categoryId}"></option>
+                </select>
+                <button class="btn btn-outline-light">Tìm Kiếm</button>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>ID</th>
+                            <th>Poster</th>
+                            <th>Tiêu đề</th>
+                            <th>Danh mục</th>
+                            <th>Lượt xem</th>
+                            <th>Mô tả</th>
+                            <th>Active</th>
+                            <th width="130">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="v : ${page.content}">
+                            <td th:text="${v.videoId}"></td>
+                            <td>
+                                <img th:if="${v.poster}" th:src="@{${v.poster}}" width="80" class="rounded" alt="poster">
+                                <span th:unless="${v.poster}" class="text-muted">No image</span>
+                            </td>
+                            <td><strong th:text="${v.title}"></strong></td>
+                            <td th:text="${v.category?.categoryname} ?: 'Chưa có'"></td>
+                            <td th:text="${v.views}"></td>
+                            <td th:text="${#strings.abbreviate(v.description, 50)}"></td>
+                            <td>
+                                <span th:if="${v.active}" class="badge bg-success">Active</span>
+                                <span th:unless="${v.active}" class="badge bg-danger">Inactive</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/videos/edit/{id}(id=${v.videoId})}" 
+                                   class="btn btn-sm btn-warning" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/admin/videos/delete/{id}(id=${v.videoId})}" 
+                                   onclick="return confirm('Xóa video này thật không Huy ơi?')" 
+                                   class="btn btn-sm btn-danger" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${page.empty}">
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <h4>Chưa có video nào cả :(</h4>
+                                <a th:href="@{/admin/videos/add}" class="btn btn-primary mt-3">Thêm video đầu tiên đi Huy ơi!</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Phân trang đẹp như slide thầy -->
+        <div class="card-footer bg-white" th:if="${page.totalPages > 1}">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/(page=0,size=${page.size},keyword=${keyword},categoryId=${categoryId})}">« First</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages-1)}"
+                        th:classappend="${i == page.number} ? 'active'">
+                        <a class="page-link" 
+                           th:href="@{/(page=${i},size=${page.size},keyword=${keyword},categoryId=${categoryId})}"
+                           th:text="${i+1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/(page=${page.totalPages-1},size=${page.size},keyword=${keyword},categoryId=${categoryId})}">Last »</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="text-center text-muted small">
+                Trang <strong th:text="${page.number + 1}"></strong> / <strong th:text="${page.totalPages}"></strong> 
+                - Tổng: <strong th:text="${page.totalElements}"></strong> video
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
