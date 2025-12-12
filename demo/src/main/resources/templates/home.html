@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>GraphQL Store</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .btn { padding: 8px 15px; background: #007bff; color: white; border: none; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .form-group { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Quản lý Sản Phẩm (GraphQL + AJAX)</h1>
+
+    <div class="form-group">
+        <label>Chọn danh mục:</label>
+        <select id="categorySelect">
+            <option value="all">Tất cả (Sắp xếp giá tăng dần)</option>
+            </select>
+        <button class="btn" onclick="fetchData()">Lọc Dữ Liệu</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Giá</th>
+                <th>Danh Mục</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            </tbody>
+    </table>
+
+    <script>
+        // Khi trang tải xong thì lấy danh sách Category
+        document.addEventListener("DOMContentLoaded", loadCategories);
+
+        async function loadCategories() {
+            const query = `query { getAllCategories { id, name } }`;
+            const data = await callGraphQL(query);
+            const categories = data.getAllCategories;
+            
+            const select = document.getElementById("categorySelect");
+            categories.forEach(c => {
+                const option = document.createElement("option");
+                option.value = c.id;
+                option.text = c.name;
+                select.appendChild(option);
+            });
+        }
+
+        async function fetchData() {
+            const catId = document.getElementById("categorySelect").value;
+            let query = "";
+
+            if (catId === "all") {
+                // Yêu cầu 1: Lấy tất cả và sắp xếp giá
+                query = `
+                    query {
+                        getAllProductsSorted {
+                            id, title, price, category { name }
+                        }
+                    }
+                `;
+            } else {
+                // Yêu cầu 2: Lấy theo ID category
+                query = `
+                    query {
+                        getProductsByCategory(categoryId: ${catId}) {
+                            id, title, price, category { name }
+                        }
+                    }
+                `;
+            }
+
+            const data = await callGraphQL(query);
+            // Xử lý dữ liệu trả về tùy theo tên hàm query
+            const products = data.getAllProductsSorted || data.getProductsByCategory;
+            renderTable(products);
+        }
+
+        // Hàm chung để gọi API
+        async function callGraphQL(query) {
+            try {
+                const response = await fetch('/graphql', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const result = await response.json();
+                return result.data;
+            } catch (error) {
+                console.error("Lỗi:", error);
+                return {};
+            }
+        }
+
+        function renderTable(products) {
+            const tbody = document.getElementById("productTableBody");
+            tbody.innerHTML = "";
+            
+            if (!products || products.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='4'>Không có dữ liệu</td></tr>";
+                return;
+            }
+
+            products.forEach(p => {
+                const catName = p.category ? p.category.name : "N/A";
+                const row = `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.title}</td>
+                        <td>${p.price} $</td>
+                        <td>${catName}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+    </script>
+</body>
+</html>

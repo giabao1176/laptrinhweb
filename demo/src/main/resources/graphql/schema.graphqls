@@ -1,0 +1,44 @@
+type Category {
+    id: ID!
+    name: String
+    images: String
+    products: [Product]
+}
+
+type User {
+    id: ID!
+    fullname: String
+    email: String
+    phone: String
+    categories: [Category]
+}
+
+type Product {
+    id: ID!
+    title: String
+    quantity: Int
+    desc: String
+    price: Float
+    user: User
+    category: Category
+}
+
+# --- QUERY ---
+type Query {
+    # 1. Hiển thị tất cả product giá tăng dần
+    getAllProductsSorted: [Product]
+    
+    # 2. Lấy product theo category
+    getProductsByCategory(categoryId: ID!): [Product]
+
+    getAllCategories: [Category]
+}
+
+# --- MUTATION ---
+type Mutation {
+    # 3. CRUD: Tạo Product mới
+    createProduct(title: String, price: Float, categoryId: ID): Product
+    
+    # Xóa Product
+    deleteProduct(id: ID!): Boolean
+}
