@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-VideoManagerApplication<video-manager-final>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.huy.VideoManagerApplication",
+            "projectName": "video-manager-final",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

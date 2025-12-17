@@ -1,16 +1,31 @@
 package com.huy.entity;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty; // Import validation
 import lombok.*;
 import java.util.*;
-@Entity @Table(name = "Category") @Data @NoArgsConstructor @AllArgsConstructor
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "Category")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
+
+    @NotEmpty(message = "Tên danh mục không được để trống") // Validate
     private String categoryname;
+
     private String images;
     private Boolean status = true;
-    @ManyToOne @JoinColumn(name = "userId")
+
+    @ManyToOne
+    @JoinColumn(name = "userId")
     private User user;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Video> videos = new ArrayList<>();
 }

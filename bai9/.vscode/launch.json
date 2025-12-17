@@ -5,6 +5,13 @@
             "name": "VideoManagerApplication",
             "request": "launch",
             "mainClass": "com.huy.VideoManagerApplication",
+            "projectName": "video-manager-final"
+        },
+        {
+            "type": "java",
+            "name": "VideoManagerApplication",
+            "request": "launch",
+            "mainClass": "com.huy.VideoManagerApplication",
             "projectName": "video-manager"
         },
         {

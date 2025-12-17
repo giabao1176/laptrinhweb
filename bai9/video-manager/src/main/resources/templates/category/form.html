@@ -1,15 +1,22 @@
 <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
     <input type="hidden" th:field="*{categoryId}">
+    
     <div class="mb-3">
         <label>Tên danh mục</label>
-        <input type="text" class="form-control" th:field="*{categoryname}" required>
+        <input type="text" class="form-control" 
+               th:classappend="${#fields.hasErrors('categoryname')} ? 'is-invalid' : ''"
+               th:field="*{categoryname}">
+               
+        <small class="text-danger" th:if="${#fields.hasErrors('categoryname')}" th:errors="*{categoryname}"></small>
     </div>
+
     <div class="mb-3">
         <label>User tạo</label>
         <select class="form-select" th:field="*{user.id}">
             <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullname}"></option>
         </select>
     </div>
+
     <div class="mb-3">
         <label>Status</label>
         <select class="form-select" th:field="*{status}">
@@ -17,5 +24,6 @@
             <option value="false">Inactive</option>
         </select>
     </div>
+
     <button type="submit" class="btn btn-success">Lưu</button>
 </form>
